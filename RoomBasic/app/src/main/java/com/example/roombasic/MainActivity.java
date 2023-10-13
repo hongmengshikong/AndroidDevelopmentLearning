@@ -3,6 +3,7 @@ package com.example.roombasic;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.room.Delete;
 import androidx.room.Room;
 import androidx.room.Update;
@@ -17,21 +18,16 @@ import android.widget.TextView;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
-    WordDatabase wordDatabase;
-    WordDao wordDao;
     TextView textView;
     Button buttonInsert,buttonUpdate,buttonDelete,buttonClear;
-    LiveData<List<Word>>allWordsLive;
+    WordViewModel wordViewModel;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        wordDatabase= Room.databaseBuilder(this,WordDatabase.class,"word_database")//获取wordDatabase对象,传递3个参数 Context,类的名称,数据库文件名称
-                .build();//呼叫.build()创建
-        wordDao=wordDatabase.getWordDao();
-        allWordsLive=wordDao.getAllWordsLive();
+        wordViewModel=new ViewModelProvider(this).get(WordViewModel.class);
         textView=findViewById(R.id.textView);
-        allWordsLive.observe(this, new Observer<List<Word>>() {
+        wordViewModel.getAllWordsLive().observe(this, new Observer<List<Word>>() {
             @Override
             public void onChanged(List<Word> words) {
                 StringBuilder text= new StringBuilder();
@@ -51,13 +47,13 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Word word1=new Word("Hello","你好!");
                 Word word2=new Word("World","世界!");
-                new InsertAsyncTask(wordDao).execute(word1,word2);
+                wordViewModel.insertWords(word1,word2);
             }
         });
         buttonClear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                new DeleteAllAsyncTask(wordDao).execute();
+                wordViewModel.deleteAllWords();
             }
         });
         buttonUpdate.setOnClickListener(new View.OnClickListener() {
@@ -65,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Word word=new Word("Hi","你好!");
                 word.setId(20);
-                new UpdateAsyncTask(wordDao).execute(word);
+                wordViewModel.updateWords(word);
             }
         });
         buttonDelete.setOnClickListener(new View.OnClickListener() {
@@ -73,57 +69,10 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Word word=new Word("Hi","你好!");
                 word.setId(17);
-                new DeleteAsyncTask(wordDao).execute(word);
+                wordViewModel.deleteWords(word);
             }
         });
 
     }
-    static class UpdateAsyncTask extends AsyncTask<Word,Void,Void>{
-        private WordDao wordDao;
-        public UpdateAsyncTask(WordDao wordDao){
-            this.wordDao=wordDao;
-        }
 
-        @Override
-        protected Void doInBackground(Word... words) {
-            wordDao.updateWords(words);
-            return null;
-        }
-    }
-    static class InsertAsyncTask extends AsyncTask<Word,Void,Void>{
-        private WordDao wordDao;
-        public InsertAsyncTask(WordDao wordDao){
-            this.wordDao=wordDao;
-        }
-
-        @Override
-        protected Void doInBackground(Word... words) {
-            wordDao.insertWords(words);
-            return null;
-        }
-    }
-    static class DeleteAsyncTask extends AsyncTask<Word,Void,Void>{
-        private WordDao wordDao;
-        public DeleteAsyncTask(WordDao wordDao){
-            this.wordDao=wordDao;
-        }
-
-        @Override
-        protected Void doInBackground(Word... words) {
-            wordDao.deleteWords(words);
-            return null;
-        }
-    }
-    static class DeleteAllAsyncTask extends AsyncTask<Void,Void,Void>{
-        private WordDao wordDao;
-        public DeleteAllAsyncTask(WordDao wordDao){
-            this.wordDao=wordDao;
-        }
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            wordDao.deleteAllWords();
-            return null;
-        }
-    }
 }
