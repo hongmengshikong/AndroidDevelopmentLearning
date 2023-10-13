@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">RoomBasic</string>
+    <string name="Button1">插入</string>
+    <string name="Button2">修改</string>
+    <string name="Button3">清空</string>
+    <string name="Button4">删除</string>
+</resources>
