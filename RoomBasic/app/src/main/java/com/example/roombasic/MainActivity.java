@@ -1,6 +1,8 @@
 package com.example.roombasic;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
 import androidx.room.Room;
 
 import android.os.Bundle;
@@ -16,7 +18,7 @@ public class MainActivity extends AppCompatActivity {
     WordDao wordDao;
     TextView textView;
     Button buttonInsert,buttonUpdate,buttonDelete,buttonClear;
-
+    LiveData<List<Word>>allWordsLive;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -25,8 +27,19 @@ public class MainActivity extends AppCompatActivity {
                 .allowMainThreadQueries()//强制允许在主线程使用
                 .build();//呼叫.build()创建
         wordDao=wordDatabase.getWordDao();
+        allWordsLive=wordDao.getAllWordsLive();
         textView=findViewById(R.id.textView);
-        updateView();
+        allWordsLive.observe(this, new Observer<List<Word>>() {
+            @Override
+            public void onChanged(List<Word> words) {
+                StringBuilder text= new StringBuilder();
+                for (int i = 0; i < words.size(); i++) {
+                    Word word=words.get(i);
+                    text.append(word.getId()).append(":").append(word.getWord()).append("=").append(word.getChineseMeaning()).append("\n");
+                }
+                textView.setText(text.toString());
+            }
+        });
         buttonInsert=findViewById(R.id.buttonInsert);
         buttonDelete=findViewById(R.id.buttonDelete);
         buttonUpdate=findViewById(R.id.buttonUpdate);
@@ -37,14 +50,12 @@ public class MainActivity extends AppCompatActivity {
                 Word word1=new Word("Hello","你好!");
                 Word word2=new Word("World","世界!");
                 wordDao.insertWords(word1,word2);
-                updateView();
             }
         });
         buttonClear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 wordDao.deleteAllWords();
-                updateView();
             }
         });
         buttonUpdate.setOnClickListener(new View.OnClickListener() {
@@ -53,7 +64,6 @@ public class MainActivity extends AppCompatActivity {
                 Word word=new Word("Hi","你好!");
                 word.setId(20);
                 wordDao.updateWords(word);
-                updateView();
             }
         });
         buttonDelete.setOnClickListener(new View.OnClickListener() {
@@ -62,18 +72,8 @@ public class MainActivity extends AppCompatActivity {
                 Word word=new Word("Hi","你好!");
                 word.setId(17);
                 wordDao.deleteWords(word);
-                updateView();
             }
         });
 
-    }
-    void updateView(){      //updateView 刷新界面
-        List<Word> list=wordDao.getAllWords();//获取list
-        String text="";
-        for (int i = 0; i < list.size(); i++) {//将list遍历一次,每次取回一列中的内容
-            Word word=list.get(i);//每次取回一个
-            text+=word.getId()+":"+word.getWord()+"="+word.getChineseMeaning()+"\n";//提取的内容增加的text
-        }
-        textView.setText(text);
     }
 }

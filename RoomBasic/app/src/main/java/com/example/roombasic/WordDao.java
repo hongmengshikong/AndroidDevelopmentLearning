@@ -1,5 +1,6 @@
 package com.example.roombasic;
 
+import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
@@ -23,5 +24,6 @@ public interface WordDao {
     void deleteAllWords();
 
     @Query("SELECT *FROM WORD ORDER BY ID DESC")////查询表来自word 排序方式通过id  降序排列
-    List<Word> getAllWords();
+//    List<Word> getAllWords();
+    LiveData<List<Word>>getAllWordsLive();
 }
