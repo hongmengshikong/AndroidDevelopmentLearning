@@ -2,7 +2,6 @@
 <resources>
     <string name="app_name">RoomBasic</string>
     <string name="Button1">插入</string>
-    <string name="Button2">修改</string>
     <string name="Button3">清空</string>
-    <string name="Button4">删除</string>
+    <string name="SwitchMessage">卡片视图</string>
 </resources>

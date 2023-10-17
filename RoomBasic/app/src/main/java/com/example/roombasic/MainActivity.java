@@ -9,34 +9,49 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
-    Button buttonInsert,buttonUpdate,buttonDelete,buttonClear;
+    Button buttonInsert,buttonClear;
     WordViewModel wordViewModel;
     RecyclerView recyclerView;
-    MyAdapter myAdapter;
+    Switch aSwitch;
+    MyAdapter myAdapter1,myAdapter2;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         recyclerView=findViewById(R.id.recyclerView);
-        myAdapter=new MyAdapter();
+        myAdapter1=new MyAdapter(false);
+        myAdapter2=new MyAdapter(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(myAdapter);
+        recyclerView.setAdapter(myAdapter1);
+        aSwitch=findViewById(R.id.switch1);
+        aSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if (b) {
+                    recyclerView.setAdapter(myAdapter2);
+                }else {
+                    recyclerView.setAdapter(myAdapter1);
+                }
+            }
+        });
         wordViewModel=new ViewModelProvider(this).get(WordViewModel.class);
         wordViewModel.getAllWordsLive().observe(this, new Observer<List<Word>>() {
             @Override
             public void onChanged(List<Word> words) {
-                myAdapter.setAllWords(words);
-                myAdapter.notifyDataSetChanged();
+                myAdapter1.setAllWords(words);
+                myAdapter2.setAllWords(words);
+                myAdapter1.notifyDataSetChanged();
+                myAdapter2.notifyDataSetChanged();
             }
         });
         buttonInsert=findViewById(R.id.buttonInsert);
-        buttonDelete=findViewById(R.id.buttonDelete);
-        buttonUpdate=findViewById(R.id.buttonUpdate);
         buttonClear=findViewById(R.id.buttonClear);
         buttonInsert.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -80,23 +95,6 @@ public class MainActivity extends AppCompatActivity {
                 wordViewModel.deleteAllWords();
             }
         });
-        buttonUpdate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Word word=new Word("Hi","你好!");
-                word.setId(20);
-                wordViewModel.updateWords(word);
-            }
-        });
-        buttonDelete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Word word=new Word("Hi","你好!");
-                word.setId(17);
-                wordViewModel.deleteWords(word);
-            }
-        });
-
     }
 
 }
