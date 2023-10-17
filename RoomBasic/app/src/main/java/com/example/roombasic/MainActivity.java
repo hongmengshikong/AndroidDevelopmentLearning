@@ -1,41 +1,37 @@
 package com.example.roombasic;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.room.Delete;
-import androidx.room.Room;
-import androidx.room.Update;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ListAdapter;
 import android.widget.TextView;
 
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
-    TextView textView;
     Button buttonInsert,buttonUpdate,buttonDelete,buttonClear;
     WordViewModel wordViewModel;
+    RecyclerView recyclerView;
+    MyAdapter myAdapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        recyclerView=findViewById(R.id.recyclerView);
+        myAdapter=new MyAdapter();
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter(myAdapter);
         wordViewModel=new ViewModelProvider(this).get(WordViewModel.class);
-        textView=findViewById(R.id.textView);
         wordViewModel.getAllWordsLive().observe(this, new Observer<List<Word>>() {
             @Override
             public void onChanged(List<Word> words) {
-                StringBuilder text= new StringBuilder();
-                for (int i = 0; i < words.size(); i++) {
-                    Word word=words.get(i);
-                    text.append(word.getId()).append(":").append(word.getWord()).append("=").append(word.getChineseMeaning()).append("\n");
-                }
-                textView.setText(text.toString());
+                myAdapter.setAllWords(words);
+                myAdapter.notifyDataSetChanged();
             }
         });
         buttonInsert=findViewById(R.id.buttonInsert);
@@ -45,9 +41,37 @@ public class MainActivity extends AppCompatActivity {
         buttonInsert.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Word word1=new Word("Hello","你好!");
-                Word word2=new Word("World","世界!");
-                wordViewModel.insertWords(word1,word2);
+                String[] english={
+                        "Hello",
+                        "Word",
+                        "Android",
+                        "Google",
+                        "Studio",
+                        "Project",
+                        "Database",
+                        "Recycler",
+                        "View",
+                        "String",
+                        "Value",
+                        "Integer"
+                };
+                String[] chinese={
+                        "你好!",
+                        "世界",
+                        "安卓",
+                        "谷歌",
+                        "工作室",
+                        "项目",
+                        "数据库",
+                        "回收站",
+                        "视图",
+                        "字符串",
+                        "价值",
+                        "整数类型"
+                };
+                for (int i = 0; i < english.length; i++) {
+                    wordViewModel.insertWords(new Word(english[i],chinese[i]));
+                }
             }
         });
         buttonClear.setOnClickListener(new View.OnClickListener() {

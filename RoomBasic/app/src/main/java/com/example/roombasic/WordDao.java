@@ -23,7 +23,7 @@ public interface WordDao {
     @Query("DELETE FROM WORD")//清空
     void deleteAllWords();
 
-    @Query("SELECT *FROM WORD ORDER BY ID DESC")////查询表来自word 排序方式通过id  降序排列
+    @Query("SELECT *FROM WORD ORDER BY ID ASC")////查询表来自word 排序方式通过id  降序排列
 //    List<Word> getAllWords();
     LiveData<List<Word>>getAllWordsLive();
 }
