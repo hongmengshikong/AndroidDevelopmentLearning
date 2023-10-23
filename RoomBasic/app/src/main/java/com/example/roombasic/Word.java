@@ -13,6 +13,16 @@ public class Word {
     private String word;
     @ColumnInfo(name = "chinese_meaning")
     private String chineseMeaning;
+    @ColumnInfo(name = "foo_data")
+    private boolean foo;
+
+    public boolean isFoo() {
+        return foo;
+    }
+
+    public void setFoo(boolean foo) {
+        this.foo = foo;
+    }
 
     public Word(String word, String chineseMeaning) {
         this.word = word;
