@@ -15,6 +15,16 @@ public class Word {
     private String chineseMeaning;
     @ColumnInfo(name = "foo_data")
     private boolean foo;
+    @ColumnInfo(name = "bar_data")
+    private boolean bar;
+
+    public boolean isBar() {
+        return bar;
+    }
+
+    public void setBar(boolean bar) {
+        this.bar = bar;
+    }
 
     public boolean isFoo() {
         return foo;
