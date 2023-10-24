@@ -13,6 +13,10 @@ import java.util.List;
 public interface WordDao {
     @Insert
     void insertWords(Word... words);
+    @Update //修改
+    void updateWords(Word... words);
+    @Delete //删除
+    void  deleteWords(Word... words);
     @Query("DELETE FROM WORD")//清空
     void deleteAllWords();
 
