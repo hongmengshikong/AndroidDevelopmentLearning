@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Words</string>
+    <string name="Button1">插入</string>
+    <string name="Button3">清空</string>
+    <string name="SwitchMessage">卡片视图</string>
+</resources>
